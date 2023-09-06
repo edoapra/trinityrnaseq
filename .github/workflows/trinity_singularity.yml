@@ -1,0 +1,86 @@
+name: trinity_apptainer
+
+on:
+  push:
+    paths-ignore:
+      - '*.sh'
+      - '*.sbatch'
+  pull_request:
+  schedule:
+    - cron: '0 0 * * SUN'
+  repository_dispatch:
+    types: [backend_automation]
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build_image:
+    runs-on: ubuntu-20.04
+    strategy:
+        fail-fast: false
+    steps:
+    - name: tag
+      run: |
+        if [[ ${{ github.ref_name }} == master ]]; then
+        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity" >> $GITHUB_ENV
+        else
+        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity_${{ github.ref_name }}" >> $GITHUB_ENV
+        fi
+    - name: echo-tag
+      run: |
+        echo ' the apptainer tag is ' "${{ env.tag }}"
+    - name: Checkout source
+      uses: actions/checkout@v3
+      with:
+        clean: false
+    - name: Install apptainer
+      env:
+        APP_VER: 1.1.2
+      run: |
+        sudo apt-get install -y  libfuse2 libseccomp2 zlib1g uidmap squashfs-tools squashfuse fuse2fs fuse-overlayfs fakeroot
+        wget -q  https://github.com/apptainer/apptainer/releases/download/v${APP_VER}/apptainer_${APP_VER}_amd64.deb 
+        sudo dpkg -i apptainer_${APP_VER}_amd64.deb
+        rm apptainer_${APP_VER}_amd64.deb
+        sudo apt-get clean
+        which apptainer
+        apptainer version
+        apptainer cache  clean -f
+        dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n
+        df -h
+        ls -lart /mnt
+        sudo touch /mnt/a.txt
+        sudo chown $USER /mnt/a.txt
+        ls -lrt /mnt
+    - name: build an apptainer container
+      run: |
+        ls -l
+        env|egrep GITHUB
+        pwd
+        cd Docker
+        df -h . /tmp /mnt
+        ls -lrt ~/
+#        sudo apptainer build  /tmp/tri.sif  tri.def
+        ./make_simg.sh
+        sudo chown  $USER *img
+        ls -lrth *img
+        file *img
+        mv *img /tmp/tri.sif
+    - name: builddate
+      id: build-date
+      run: |
+        echo "date=$(TZ=America/Los_Angeles date +%Y%m%d_%H%M%S)" >> $GITHUB_ENV
+    - name: push to ghcr.io
+      run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | apptainer remote login -u ${{ github.actor }} --password-stdin oras://ghcr.io
+        cd Docker
+        pwd
+        ls -l
+        apptainer remote list
+        apptainer push /tmp/tri.sif ${{ env.tag }}:${{ env.date }}
+        apptainer push /tmp/tri.sif ${{ env.tag }}:latest
+    - name: test image with apptainer
+      run: |
+        rm -f /tmp/tri.sif || true
+        apptainer pull  -F /tmp/tri.sif ${{ env.tag }}:${{ env.date }}
+        apptainer exec ${{ env.tag }}:${{ env.date }} Trinity  --version
+        apptainer cache list -v
