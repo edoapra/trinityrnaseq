@@ -8,9 +8,11 @@ Dockerfile $SRC/Dockerfile.$TRINITY_VERSION
 MAINTAINER bhaas@broadinstitute.org
 %post
 
-DEBIAN_FRONTEND=noninteractive
+export DEBIAN_FRONTEND=noninteractive
 
-apt-get -qq update && apt-get -qq -y install \
+apt-get -qq update \
+&& DEBIAN_FRONTEND=noninteractive TZ=America/Los_Angeles apt-get -y install tzdata \
+&& apt-get -qq -y install \
 automake \
 build-essential \
 bzip2 \
@@ -54,7 +56,6 @@ python3-pip \
 python3-setuptools \
 rsync \
 texlive-latex-base \
-tzdata \
 unzip \
 wget \
 x11-common \
