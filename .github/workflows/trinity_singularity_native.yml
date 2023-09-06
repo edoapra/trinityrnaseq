@@ -15,9 +15,9 @@ jobs:
     - name: tag
       run: |
         if [[ ${{ github.ref_name }} == master ]]; then
-        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity" >> $GITHUB_ENV
+        echo "tag=oras://ghcr.io/${{ github.repository }}/Trinity" >> $GITHUB_ENV
         else
-        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity_${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "tag=oras://ghcr.io/${{ github.repository }}/Trinity_${{ github.ref_name }}" >> $GITHUB_ENV
         fi
     - name: echo-tag
       run: |
@@ -48,11 +48,10 @@ jobs:
         cd Docker
         df -h . /tmp /mnt
         ls -lrt ~/
-        ./make_simg.sh
-        sudo chown  $USER *img
-        ls -lrth *img
-        file *img
-        mv *img /tmp/tri.sif
+        sudo apptainer build  /tmp/tri.sif  Singularity.def
+        sudo chown  $USER *sif
+        ls -lrth *sif
+        file *sif
     - name: builddate
       id: build-date
       run: |
