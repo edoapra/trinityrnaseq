@@ -1,4 +1,4 @@
-name: trinity_apptainer
+name: trinity_apptainer_native
 
 on:
   repository_dispatch:
