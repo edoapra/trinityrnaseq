@@ -47,10 +47,6 @@ jobs:
         apptainer cache  clean -f
         dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n
         df -h
-        ls -lart /mnt
-        sudo touch /mnt/a.txt
-        sudo chown $USER /mnt/a.txt
-        ls -lrt /mnt
     - name: build an apptainer container
       run: |
         ls -l
@@ -59,7 +55,6 @@ jobs:
         cd Docker
         df -h . /tmp /mnt
         ls -lrt ~/
-#        sudo apptainer build  /tmp/tri.sif  tri.def
         ./make_simg.sh
         sudo chown  $USER *img
         ls -lrth *img
