@@ -268,13 +268,16 @@ TRINITY_CO=8f0c44bccc321170b0994b2196f5be27f9c49b10
 
 mkdir -p $SRC
 cd $SRC
-
+# some cleanup
+rm -r ${R_VERSION} *.tar.gz *.zip *.bz2
+df -h .
 git clone --recursive https://github.com/trinityrnaseq/trinityrnaseq.git && \
 cd trinityrnaseq && \
 git checkout ${TRINITY_CO} && \
 git submodule init && git submodule update && \
 git submodule foreach --recursive git submodule init && \
 git submodule foreach --recursive git submodule update && \
+rm -rf .git && \
 rm -rf ./trinity_ext_sample_data && \
 make && make plugins && \
 make install && \
@@ -286,9 +289,9 @@ PATH=${TRINITY_HOME}:${PATH}
 
 
 # some cleanup
-mkdir -p $SRC
-cd $SRC
-rm -r ${R_VERSION} *.tar.gz *.zip *.bz2
+#mkdir -p $SRC
+#cd $SRC
+#rm -r ${R_VERSION} *.tar.gz *.zip *.bz2
 
 apt-get -qq -y remove git && \
 apt-get -qq -y autoremove && \
