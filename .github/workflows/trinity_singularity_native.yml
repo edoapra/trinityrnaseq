@@ -49,7 +49,7 @@ jobs:
         cd Docker
         df -h . /tmp /mnt
         ls -lrt ~/
-        sudo apptainer build  /tmp/tri.sif  Singularity.def
+        apptainer build --fakeroot /tmp/tri.sif  Singularity.def
         sudo chown  $USER /tmp/*sif
         ls -lrth /tmp/*sif
         file /tmp/*sif
