@@ -293,6 +293,12 @@ rm -r ${R_VERSION} *.tar.gz *.zip *.bz2
 apt-get -qq -y remove git && \
 apt-get -qq -y autoremove && \
 apt-get clean && \
+echo "dddddddddddd" && \
+dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 100 && \
+echo "dddddddddddd" && \
+du -sk /usr/local/* && \
+du -sk /tmp/* || true && \
+ls -lart /tmp ||true && \
 rm -rf /var/lib/apt/lists/* /var/log/dpkg.log
 
 ################################################
