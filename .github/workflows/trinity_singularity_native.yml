@@ -16,9 +16,9 @@ jobs:
     - name: tag
       run: |
         if [[ ${{ github.ref_name }} == master ]]; then
-        echo "tag=oras://ghcr.io/${{ github.repository }}/Trinity" >> $GITHUB_ENV
+        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity" >> $GITHUB_ENV
         else
-        echo "tag=oras://ghcr.io/${{ github.repository }}/Trinity_${{ github.ref_name }}" >> $GITHUB_ENV
+        echo "tag=oras://ghcr.io/${{ github.repository }}/trinity_${{ github.ref_name }}" >> $GITHUB_ENV
         fi
     - name: echo-tag
       run: |
