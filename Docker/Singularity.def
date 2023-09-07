@@ -279,6 +279,9 @@ git submodule foreach --recursive git submodule init && \
 git submodule foreach --recursive git submodule update && \
 rm -rf .git && \
 rm -rf ./trinity_ext_sample_data && \
+ls -lrt trinity-plugins/bamsifter/ || true && \
+ls -lrt trinity-plugins/bamsifter/htslib || true && \
+rm -rf trinity-plugins/bamsifter/htslib \
 make && make plugins && \
 make install && \
 cd ../ && rm -r trinityrnaseq
