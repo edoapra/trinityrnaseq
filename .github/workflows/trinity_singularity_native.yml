@@ -49,9 +49,9 @@ jobs:
         df -h . /tmp /mnt
         ls -lrt ~/
         sudo apptainer build  /tmp/tri.sif  Singularity.def
-        sudo chown  $USER *sif
-        ls -lrth *sif
-        file *sif
+        sudo chown  $USER /tmp/*sif
+        ls -lrth /tmp/*sif
+        file /tmp/*sif
     - name: builddate
       id: build-date
       run: |
