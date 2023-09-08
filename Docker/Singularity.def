@@ -271,17 +271,10 @@ cd $SRC
 # some cleanup
 rm -r ${R_VERSION} *.tar.gz *.zip *.bz2
 df -h .
-git clone --recursive https://github.com/trinityrnaseq/trinityrnaseq.git && \
+git clone --recursive --depth 1 --branch  Trinity-v$TRINITY_VERSION git@github.com:trinityrnaseq/trinityrnaseq.git && \
 cd trinityrnaseq && \
-git checkout ${TRINITY_CO} && \
-git submodule init && git submodule update && \
-git submodule foreach --recursive git submodule init && \
-git submodule foreach --recursive git submodule update && \
 rm -rf .git && \
 rm -rf ./trinity_ext_sample_data && \
-ls -lrt trinity-plugins/bamsifter/ || true && \
-ls -lrt trinity-plugins/bamsifter/htslib || true && \
-rm -rf trinity-plugins/bamsifter/htslib \
 make && make plugins && \
 make install && \
 cd ../ && rm -r trinityrnaseq
